@@ -1,0 +1,104 @@
+/* VOICE: 制作現場の道具。静かで速い、引く辞書。
+   IDEA: ライトボックスに並べたコンタクトシート。気になるコマに赤のグリースペンシルで印をつける。
+   PICTURE: 画面いっぱいのフィルムコマ（サムネイル）の格子。それ自体が道具。
+   COLOUR and TYPE: 乳白のライトボックス／夜は暗室。黒いフィルム枠、赤ペン #d7262b 一色。Zen Kaku Gothic New。
+   LAYOUT: 細い見出し帯と操作列。「名前で引く」は辞典の項目（見出し語・読み・説明・関連語と作例のコマ）、
+           「絵で引く」はコマの格子。作例を選ぶと手法名を大きく出すシートが開く。 */
+:root{color-scheme:light dark;
+--bg:light-dark(#efeee9,#0f1011);--ink:light-dark(#151515,#ecebe6);--sub:light-dark(#5d5d58,#a3a29c);
+--film:light-dark(#18181a,#000);--line:light-dark(#d4d2ca,#2a2b2e);--chip:light-dark(#fff,#1a1b1d);
+--red:light-dark(#d7262b,#ff4a46);--sheet:light-dark(#fbfaf7,#17181a);--barh:0px}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;overflow-x:clip}
+body.lock{overflow:hidden}
+button,input{font:inherit;color:inherit}
+header{padding:28px max(4vw,16px) 8px}
+.sites{display:flex;flex-wrap:wrap;gap:4px 18px;margin:0 0 14px;font-size:14px}
+.sites a{color:var(--sub);text-decoration:none;padding:2px 0;border-bottom:2px solid transparent}
+.sites a:hover{color:var(--ink)}
+.sites a[aria-current=page]{color:var(--ink);font-weight:700;border-bottom-color:var(--red)}
+h1{margin:0;font-size:clamp(30px,4.4vw,46px);line-height:1.05;font-weight:900;letter-spacing:.01em;text-wrap:balance}
+h1 span{color:var(--red)}
+.lead{margin:10px 0 0;color:var(--sub);max-width:62ch;text-wrap:pretty;word-break:auto-phrase}
+#stat{display:inline-block}
+.bar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);padding:12px max(4vw,16px);border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.search{flex:1 1 260px;display:flex;align-items:center;gap:8px;background:var(--chip);border:1px solid var(--line);border-radius:10px;padding:0 12px;min-height:44px}
+.search input{flex:1;border:0;background:none;font-size:16px;outline:none;min-height:42px}
+.search:focus-within{border-color:var(--red)}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--chip)}
+.seg button{border:0;background:none;padding:0 14px;min-height:44px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.tgl{border:1px solid var(--line);background:var(--chip);border-radius:10px;padding:0 14px;min-height:44px;cursor:pointer;white-space:nowrap}
+.tgl[aria-pressed=true]{border-color:var(--red);color:var(--red);font-weight:700}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px}
+.chips button{flex:none;border:1px solid var(--line);background:var(--chip);border-radius:99px;padding:6px 13px;cursor:pointer;font-size:14px;min-height:36px}
+.chips button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
+button:focus-visible,a:focus-visible,.frame:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+main{padding:16px max(4vw,16px) 40px;max-width:1500px;margin:0 auto}
+.count{font-size:13px;color:var(--sub);margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px 14px}
+.frame{background:var(--film);padding:13px 6px 6px;border-radius:3px;cursor:pointer;position:relative;border:0;text-align:left;color:#eee;display:flex;flex-direction:column;transition:transform .15s}
+.frame::before,.frame::after{content:"";position:absolute;left:6px;right:6px;height:5px;background:repeating-linear-gradient(90deg,transparent 0 5px,light-dark(#efeee9,#3a3a3a) 5px 11px,transparent 11px 16px)}
+.frame::before{top:4px}
+.frame img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#222}
+.cap{padding:7px 3px 3px;font-size:12.5px;line-height:1.4;color:#cfcfca;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tags{display:flex;flex-wrap:wrap;gap:4px;padding:4px 3px 3px}
+.tags span{font-size:12px;background:#fff;color:#111;padding:1px 7px;border-radius:3px;font-weight:700}
+.frame:hover{transform:translateY(-2px)}
+.frame:hover img{outline:2px solid var(--red);outline-offset:-2px}
+.strip{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
+.strip .frame{flex:0 0 200px;scroll-snap-align:start}
+.empty{padding:60px 0;text-align:center;color:var(--sub)}
+
+/* 辞典 */
+.grp{margin:0 0 28px}
+.gh{position:sticky;top:var(--barh);z-index:3;background:var(--bg);margin:0;padding:10px 0 8px;border-bottom:2px solid var(--ink);display:flex;align-items:baseline;gap:10px}
+.gh b{font-size:22px;font-weight:900;line-height:1.2}
+.gh span{font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums}
+.entry{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:14px 32px;padding:22px 0;border-bottom:1px solid var(--line);scroll-margin-top:calc(var(--barh) + 56px)}
+.entry .txt{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.path{font-size:13px;color:var(--sub)}
+.entry h3{margin:0;font-size:clamp(24px,2.6vw,30px);font-weight:900;line-height:1.25;overflow-wrap:anywhere;text-wrap:balance;word-break:auto-phrase}
+.entry.hit .hw{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--red) 35%,transparent) 62%)}
+.reads{display:flex;flex-wrap:wrap;gap:2px 14px;font-size:14px;color:var(--sub)}
+.reads .en{letter-spacing:.02em}
+.def{margin:6px 0 0;font-size:15.5px;line-height:1.8;max-width:40em;text-wrap:pretty;word-break:auto-phrase}
+.def.none,.def.x{color:var(--sub);font-size:14.5px}
+.chk{display:inline-block;margin-left:8px;font-size:12px;font-weight:700;color:var(--red);border:1px solid var(--red);border-radius:4px;padding:0 6px;line-height:1.7;vertical-align:1px;white-space:nowrap;cursor:help}
+.rel{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 0}
+.rel>span{font-size:12px;color:var(--sub);margin-right:2px}
+.rel a{font-size:13.5px;color:var(--ink);text-decoration:none;border:1px solid var(--line);background:var(--chip);border-radius:99px;padding:3px 11px}
+.rel a:hover{border-color:var(--red);color:var(--red)}
+.entry .strip{align-self:start}
+
+/* シート */
+.veil{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;display:none;align-items:center;justify-content:center;padding:16px}
+.veil.on{display:flex}
+.sheet{background:var(--sheet);color:var(--ink);width:min(1080px,100%);max-height:92vh;overflow:auto;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.4);display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+.sheet .pic{background:var(--film);padding:18px 10px 10px;position:relative}
+.player{width:100%;aspect-ratio:16/9;background:#000}.player iframe{width:100%;height:100%;border:0;display:block}
+.seek{border:1px solid var(--red);color:var(--red);background:none;border-radius:6px;padding:2px 8px;font-size:13px;cursor:pointer;margin-left:4px}
+.sheet .pic .vt{color:#ddd;font-size:14px;margin:10px 2px 6px;line-height:1.45}
+.yt{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;text-decoration:none;border-radius:8px;padding:0 14px;min-height:44px;font-weight:700;margin:4px 2px}
+.info{padding:22px 22px 18px;display:flex;flex-direction:column;gap:22px}
+.close{position:sticky;top:0;align-self:flex-end;border:1px solid var(--line);background:var(--chip);border-radius:50%;width:44px;height:44px;cursor:pointer;font-size:20px;line-height:1;margin:-8px -8px -40px 0}
+.word{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.word h3{margin:2px 0 4px;font-size:clamp(26px,3.4vw,36px);line-height:1.15;font-weight:900;text-wrap:balance;word-break:auto-phrase}
+.word h3 mark{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--red) 35%,transparent) 62%);color:inherit}
+.word .def{font-size:15px;margin:4px 0 0}
+.word .note{margin:8px 0 0;font-size:15px;border-left:3px solid var(--red);padding-left:10px;color:var(--sub);text-wrap:pretty}
+.toj{margin-top:8px;font-size:14px;color:var(--red);font-weight:700;text-decoration:none}
+.toj:hover{text-decoration:underline}
+.word .more{font-size:13px;color:var(--sub);margin-top:10px}
+.mini{display:flex;gap:8px;overflow-x:auto;padding:6px 0;max-width:100%}
+.mini button{flex:0 0 112px;border:0;padding:0;background:none;cursor:pointer;text-align:left}
+.mini img{width:112px;aspect-ratio:16/9;object-fit:cover;display:block;border-radius:3px}
+footer{padding:20px max(4vw,16px) 40px;color:var(--sub);font-size:13px;border-top:1px solid var(--line)}
+footer p{margin:0 0 6px;max-width:80ch;text-wrap:pretty;word-break:auto-phrase}
+footer a{color:inherit}
+@media(max-width:860px){.entry{grid-template-columns:1fr}}
+@media(max-width:700px){.bar{position:static}.sheet{grid-template-columns:1fr}.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px 10px}.strip .frame{flex-basis:160px}.seg button{padding:0 11px;font-size:14px}}
+@media(prefers-reduced-motion:reduce){.frame{transition:none}.frame:hover{transform:none}}
