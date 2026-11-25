@@ -36,6 +36,16 @@ python -m http.server 8000
 
 URLの `#手法名`（例：`#ロトスコープ`）で、辞典のその項目を直接開ける。
 
+埋め込みプレーヤーは `youtube.com/embed` を使う（`youtube-nocookie.com` ではない）。
+同じブラウザでYouTubeにログインしていれば、そのアカウントで再生される（YouTube Premiumなら広告なし）。
+ブラウザがサードパーティCookieをブロックしていると、ログイン状態は引き継がれない。
+
+## 公開
+
+GitHub Pages（リポジトリ nishikawa251/eizo-jiten の main ブランチ直下）で公開している。
+https://nishikawa251.github.io/eizo-jiten/
+コミットして `git push` すると、1〜2分で公開ページに反映される。
+
 ## 出典
 
 Scrapbox movieclub「映像表現辞典(未整理)」
